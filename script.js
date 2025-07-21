@@ -1,3 +1,34 @@
+/* ── FRONT-FLOW LOGIC ───────────────────── */
+const boot   = document.getElementById('boot-screen');
+const cap    = document.getElementById('captcha-screen');
+const check  = document.getElementById('checkbox-screen');
+const puzzle = document.getElementById('puzzle-screen');
+const stack  = document.getElementById('popup-stack');
+
+function showCaptcha(){ boot.classList.add('hidden'); cap.classList.remove('hidden'); }
+function captchaFail(){ cap.classList.add('hidden');  check.classList.remove('hidden'); }
+
+let popupCount=0;
+const msgs=[
+"That's what a bot would say.",
+"Lies detected.",
+"Too confident.",
+"You clicked too fast."
+];
+document.getElementById('human-form').onsubmit=e=>{
+  e.preventDefault();
+  const chk=document.getElementById('chkHuman');
+  const pop=document.createElement('div');
+  pop.className='win95-window'; pop.style=`position:absolute;top:${20+popupCount*20}px;left:${30+popupCount*30}px;width:200px`;
+  pop.innerHTML=`<div class="titlebar">Error</div><div class="w-body">${msgs[Math.floor(Math.random()*msgs.length)]}</div>`;
+  stack.appendChild(pop); popupCount++; chk.checked=false;
+  if(popupCount===4){
+    const btn=document.createElement('button');
+    btn.className='btn'; btn.textContent='I accept my fate';
+    btn.onclick=()=>{ check.classList.add('hidden'); puzzle.classList.remove('hidden'); };
+    stack.appendChild(btn);
+  }
+};
 /* ======== ELEMENT REFERENCES ======== */
 const parts   = [...document.querySelectorAll('.part')];
 const targets = [...document.querySelectorAll('#stage div[data-tag]')];
