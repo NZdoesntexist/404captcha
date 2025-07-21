@@ -128,3 +128,32 @@ function end(win){
 </script>
 </body>
 </html>
+  }
+}
+<head>
+   …
+-  <link rel="stylesheet" href="style.css">
++  <link rel="stylesheet" href="style.css"> <!-- path is already root → OK -->
+</head>
+<body>
+   …
+-  <img src="images/robot_head.png"       class="part" …>
+-  <img src="images/robot_body.png"       class="part" …>
+-  <img src="images/robot_arm_left.png"   class="part" …>
+-  <img src="images/robot_arm_right.png"  class="part" …>
+-  <img src="images/robot_leg_left.png"   class="part" …>
+-  <img src="images/robot_leg_right.png"  class="part" …>
++  <img src="images/robot_head.png"       class="part" …>
++  <img src="images/robot_body.png"       class="part" …>
++  <img src="images/robot_arm_left.png"   class="part" …>
++  <img src="images/robot_arm_right.png"  class="part" …>
++  <img src="images/robot_leg_left.png"   class="part" …>
++  <img src="images/robot_leg_right.png"  class="part" …>
+
+-  <audio id="snd-beep" src="sounds/windows-95-sfx-beep.wav"></audio>
+-  <audio id="snd-ding" src="sounds/windows-95-sfx-ding.wav"></audio>
++  <audio id="snd-beep" src="sounds/windows-95-sfx-beep.wav"></audio>
++  <audio id="snd-ding" src="sounds/windows-95-sfx-ding.wav"></audio>
+
+-  <script src="script.js"></script>
++  <script src="script.js"></script> <!-- keep lowercase to match filename -->
