@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>404 CAPTCHA – Bot Rebuilder</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- DOS VGA font -->
+<style>
+@font-face{
+  font-family:'DOS437';
+  src:url('fonts/Perfect DOS VGA 437.ttf') format('truetype');
+}
+:root{--grey:#c0c0c0;--blue:#000080;--light:#e0e0e0}
+html,body{margin:0;height:100%;background:var(--grey);font-family:'DOS437',monospace;user-select:none}
+#window{width:480px;margin:40px auto;border:2px solid #000;box-shadow:2px 2px #fff inset,-2px -2px #808080 inset;background:var(--light)}
+.titlebar{background:var(--blue);color:#fff;padding:4px 6px;font-size:14px}
+#content{padding:14px;position:relative}
+#timer{color:#d00000;font-size:14px;margin-bottom:6px}
+#stage{position:relative;width:320px;height:220px;margin:0 auto;border:2px dashed #808080;background:#fff}
+.part{position:absolute;width:72px;cursor:grab}
+.part.placed{cursor:default;pointer-events:none}
+#overlay{position:absolute;inset:0;background:rgba(192,192,192,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;visibility:hidden}
+.btn{padding:4px 10px;border:2px solid #000;background:var(--light);box-shadow:1px 1px #fff inset,-1px -1px #808080 inset;font-family:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div id="window">
+  <div class="titlebar">botbuilder_final_FINAL.exe</div>
+  <div id="content">
+    <div id="timer">Time left: 30 s</div>
+
+    <!-- STAGE -->
+    <div id="stage">
+      <!-- snap-targets (invisible) -->
+      <div data-tag="head" style="position:absolute;left:124px;top:12px;width:72px;height:72px"></div>
+      <div data-tag="body" style="position:absolute;left:124px;top:84px;width:72px;height:72px"></div>
+      <div data-tag="armL" style="position:absolute;left: 56px;top:96px;width:72px;height:72px"></div>
+      <div data-tag="armR" style="position:absolute;left:192px;top:96px;width:72px;height:72px"></div>
+      <div data-tag="legL" style="position:absolute;left: 96px;top:156px;width:72px;height:72px"></div>
+      <div data-tag="legR" style="position:absolute;left:152px;top:156px;width:72px;height:72px"></div>
+
+      <!-- draggable robot parts -->
+      <img src="images/robot_head.png"       class="part" data-tag="head" style="left:10px; top:10px;">
+      <img src="images/robot_body.png"       class="part" data-tag="body" style="left:242px;top:16px;">
+      <img src="images/robot_arm_left.png"   class="part" data-tag="armL" style="left:10px; top:150px;">
+      <img src="images/robot_arm_right.png"  class="part" data-tag="armR" style="left:300px;top:90px;">
+      <img src="images/robot_leg_left.png"   class="part" data-tag="legL" style="left:220px;top:170px;">
+      <img src="images/robot_leg_right.png"  class="part" data-tag="legR" style="left: 60px;top:90px;">
+    </div>
+
+    <!-- OVERLAY -->
+    <div id="overlay">
+      <div id="ov-msg" style="font-size:18px;text-align:center"></div>
+      <button class="btn" id="ov-btn1"></button>
+      <button class="btn" id="ov-btn2" style="display:none"></button>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="snd-beep" src="sounds/windows-95-sfx-beep.wav"  preload="auto"></audio>
+    <audio id="snd-ding" src="sounds/windows-95-sfx-ding.wav"  preload="auto"></audio>
+  </div>
+</div>
+
+<script>
+const parts=[...document.querySelectorAll('.part')];
+const targets=[...document.querySelectorAll('#stage div[data-tag]')];
+const sndBeep=document.getElementById('snd-beep');
+const sndDing=document.getElementById('snd-ding');
+let placed=0,start=false,time=30,countdown;
+
+function startTimer(){
+  if(start) return; start=true;
+  countdown=setInterval(()=>{
+    time--;document.getElementById('timer').textContent=`Time left: ${time} s`;
+    if(time<=0){ end(false); }
+  },1000);
+}
+
+parts.forEach(p=>{
+  p.onpointerdown=e=>{
+    startTimer(); sndBeep.currentTime=0; sndBeep.play();
+    const shiftX=e.clientX-p.offsetLeft, shiftY=e.clientY-p.offsetTop;
+    p.setPointerCapture(e.pointerId);
+    const move=ev=>{ p.style.left=ev.clientX-shiftX+'px'; p.style.top=ev.clientY-shiftY+'px'; };
+    const up=()=>{
+      p.releasePointerCapture(e.pointerId);
+      document.removeEventListener('pointermove',move);
+      snap(p);
+    };
+    document.addEventListener('pointermove',move);
+    document.addEventListener('pointerup',up,{once:true});
+  };
+});
+
+function snap(el){
+  const tag=el.dataset.tag;
+  const tgt=targets.find(t=>t.dataset.tag===tag);
+  const dx=el.offsetLeft - tgt.offsetLeft;
+  const dy=el.offsetTop  - tgt.offsetTop;
+  if(Math.hypot(dx,dy)<25){
+    el.style.left=tgt.offsetLeft+'px';
+    el.style.top =tgt.offsetTop +'px';
+    el.classList.add('placed');
+    placed++;
+    if(placed===parts.length){ end(true); }
+  }
+}
+
+function end(win){
+  clearInterval(countdown);
+  const ov=document.getElementById('overlay');
+  const m=document.getElementById('ov-msg');
+  const b1=document.getElementById('ov-btn1');
+  const b2=document.getElementById('ov-btn2');
+  ov.style.visibility='visible';
+  if(win){
+    sndDing.play();
+    m.textContent='✔ 404 VERIFIED. You rebuilt the bot!';
+    b1.textContent='Tweet Proof'; b1.onclick=()=>window.open('https://twitter.com/intent/tweet?text=I+passed+the+404+CAPTCHA+and+became+the+bot!','_blank');
+    b2.style.display='inline-block'; b2.textContent='Enter Telegram'; b2.onclick=()=>window.open('https://t.me/YOUR_SECRET_TG','_blank');
+  }else{
+    m.textContent='✖ SYSTEM FAILURE — Time ran out.';
+    b1.textContent='Retry'; b1.onclick=()=>location.reload();
+    b2.style.display='none';
+  }
+}
+</script>
+</body>
+</html>

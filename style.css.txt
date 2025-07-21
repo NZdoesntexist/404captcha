@@ -1,0 +1,114 @@
+/* ───────── DOS-era pixel font ───────── */
+@font-face {
+  font-family: 'DOS437';
+  src: url('fonts/Perfect DOS VGA 437.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --grey: #c0c0c0;
+  --grey-light: #e0e0e0;
+  --grey-dark: #808080;
+  --blue: #000080;
+  --accent-red: #d00000;
+  --accent-green: #009900;
+}
+
+/* basic page */
+html,body {
+  margin: 0;
+  height: 100%;
+  background: var(--grey);
+  font-family: 'DOS437', monospace;
+  user-select: none;
+  cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAGklEQVR42mNgGAWjgP8zEMQsDAwM/A8lx6gBAI/PDyXCHnQAACm9RqHlWXRPAAAAAElFTkSuQmCC') 4 1, default;
+}
+
+/* fake Win95 window frame */
+#window {
+  width: 480px;
+  max-width: 96vw;
+  background: var(--grey-light);
+  margin: 40px auto;
+  border: 2px solid #000;
+  box-shadow: 2px 2px #fff inset, -2px -2px var(--grey-dark) inset;
+}
+
+.titlebar {
+  background: var(--blue);
+  color: #fff;
+  padding: 4px 6px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+#content {
+  padding: 14px;
+  position: relative;
+}
+
+/* timer text */
+#timer {
+  color: var(--accent-red);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+/* puzzle stage */
+#stage {
+  position: relative;
+  width: 320px;
+  height: 220px;
+  margin: 0 auto;
+  border: 2px dashed var(--grey-dark);
+  background: #ffffff;
+}
+
+/* draggable parts */
+.part {
+  position: absolute;
+  width: 72px;          /* adjust to match your PNGs */
+  touch-action: none;   /* prevent iOS long-press menu */
+  cursor: grab;
+  transition: transform 0.2s;
+}
+
+.part.placed {
+  cursor: default;
+  pointer-events: none;
+  transform: scale(1.02);
+}
+
+/* overlay for win/fail */
+#overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(192, 192, 192, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  visibility: hidden;
+  z-index: 99;
+  animation: flicker 80ms step-end infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.99; }
+  50%      { opacity: 0.96; }
+}
+
+/* buttons */
+.btn {
+  padding: 4px 14px;
+  background: var(--grey-light);
+  border: 2px solid #000;
+  box-shadow: 1px 1px #fff inset, -1px -1px var(--grey-dark) inset;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--grey);
+}
