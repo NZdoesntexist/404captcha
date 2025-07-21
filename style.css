@@ -1,3 +1,13 @@
+.win95-window{
+  width: 480px;
+  max-width: 95vw;
+  margin: 40px auto;
+  border: 2px solid #000;
+  box-shadow: 2px 2px #fff inset, -2px -2px #808080 inset;
+  background: var(--grey-light);
+}
+.win95-window .w-body{padding:14px;line-height:1.4}
+.hidden{display:none}
 /* ───────── DOS-era pixel font ───────── */
 @font-face {
   font-family: 'DOS437';
